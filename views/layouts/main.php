@@ -12,15 +12,16 @@ use app\assets\AppAsset;
 
 AppAsset::register($this);
 
-$menuItems = [
-    ['label' => 'News', 'url' => ['/news/index']],
-];
+$menuItems[] = ['label' => 'News', 'url' => ['/news/index']];
 if (Yii::$app->user->isGuest) {
     $menuItems[] = ['label' => 'Login', 'url' => ['/user/security/login']];
 } else {
     if (Yii::$app->user->identity->getIsAdmin()) {
-        $menuItems[] = ['label' => 'Users', 'url' => ['/user/admin/index']];
-        $menuItems[] = ['label' => 'Roles', 'url' => ['/rbac/role/index']];
+        $menuItems[] = ['label' => 'Admin', 'items' => [
+            ['label' => 'News', 'url' => ['/news-admin/index']],
+            ['label' => 'Users', 'url' => ['/user/admin/index']],
+            ['label' => 'Roles', 'url' => ['/rbac/role/index']]
+        ]];
     }
     $menuItems[] = (
         '<li>'

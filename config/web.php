@@ -16,28 +16,28 @@ $config = [
         'gridview' => ['class' => 'kartik\grid\Module'],
     ],
     'components' => [
-        'request'       => [
+        'request'      => [
             // !!! insert a secret key in the following (if it is empty) - this is required by cookie validation
             'cookieValidationKey' => '2eI87gOhiVDABvZppD0px-4L9pRIP_ad',
         ],
-        'cache'         => [
+        'cache'        => [
             'class' => 'yii\caching\FileCache',
         ],
-        'user'          => [
+        'user'         => [
             'identityClass'   => 'app\models\User',
             'enableAutoLogin' => true,
         ],
-        'errorHandler'  => [
+        'errorHandler' => [
             'errorAction' => 'site/error',
         ],
-        'mailer'        => [
+        'mailer'       => [
             'class'            => 'yii\swiftmailer\Mailer',
             // send all mails to a file by default. You have to set
             // 'useFileTransport' to false and configure a transport
             // for the mailer to send real emails.
             'useFileTransport' => true,
         ],
-        'log'           => [
+        'log'          => [
             'traceLevel' => YII_DEBUG ? 3 : 0,
             'targets'    => [
                 [
@@ -46,12 +46,14 @@ $config = [
                 ],
             ],
         ],
-        'db'            => $db,
-        'urlManager'    => [
+        'db'           => $db,
+        'urlManager'   => [
             'class'           => 'yii\web\UrlManager',
             'enablePrettyUrl' => true,
             'showScriptName'  => false,
             'rules'           => [
+                'news/<action:\w+>/<slug:\d+>' => 'news/<action>',
+
                 '<controller:\w+>'                       => '<controller>/index',
                 '<controller:\w+>/<action:\w+>'          => '<controller>/<action>',
                 '<controller:\w+>/<action:\w+>/<id:\d+>' => '<controller>/<action>',

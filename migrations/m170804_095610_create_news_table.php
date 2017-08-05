@@ -1,6 +1,7 @@
 <?php
 
 use yii\db\Migration;
+use app\models\News;
 
 /**
  * Handles the creation of table `news`.
@@ -16,7 +17,9 @@ class m170804_095610_create_news_table extends Migration
                            [
                                'id'          => $this->primaryKey(),
                                'title'       => $this->string()->notNull(),
-                               'slug'        => $this->string()->notNull(),
+                               'slug'        => $this->string()
+                                                     ->notNull()
+                                                     ->defaultValue(News::STATUS_ACTIVE),
                                'image'       => $this->string(),
                                'status'      => $this->integer()->notNull(),
                                'short_text'  => $this->string(),

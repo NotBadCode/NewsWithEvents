@@ -113,3 +113,12 @@ a.desc:after {
 .nav > li > form > button.logout:focus {
     outline: none;
 }
+
+.news {
+    display: flex;
+    flex-direction: column;
+}
+.news-image {
+    float: left;
+    margin-right: 10px;
+}

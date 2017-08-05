@@ -31,7 +31,7 @@ class NewsAdminController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['index', 'create', 'update', 'delete', 'ajax-update'],
+                        'actions' => ['index', 'create', 'update', 'delete', 'get-model-slug', 'ajax-update'],
                         'allow'   => true,
                         'roles'   => [$roles['manager']],
                     ],
@@ -90,13 +90,15 @@ class NewsAdminController extends Controller
     public function actionCreate()
     {
         $model = new News();
+        $model->setScenario('insert');
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['update', 'id' => $model->id]);
+            return $this->redirect(['index']);
         } else {
             return $this->render('create',
                                  [
-                                     'model' => $model,
+                                     'model'      => $model,
+                                     'formParams' => [],
                                  ]);
         }
     }
@@ -110,9 +112,9 @@ class NewsAdminController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
+        $model->setScenario('update');
 
         $request = Yii::$app->request;
-
 
         if ($model->load($request->post()) && $model->save()) {
             if ($request->isAjax) {
@@ -121,7 +123,7 @@ class NewsAdminController extends Controller
                 return ['result' => true];
             } else {
 
-                return $this->redirect(['update', 'id' => $model->id]);
+                return $this->redirect(['index']);
             }
         }
 
@@ -132,7 +134,8 @@ class NewsAdminController extends Controller
         } else {
             return $this->render('update',
                                  [
-                                     'model' => $model,
+                                     'model'      => $model,
+                                     'formParams' => [],
                                  ]);
         }
     }
@@ -159,10 +162,16 @@ class NewsAdminController extends Controller
      */
     protected function findModel($id)
     {
-        if (($model = News::findOne($id)) !== null) {
-            return $model;
+        if (!Yii::$app->user->identity->isAdmin) {
+            $model = News::findOne(['id' => $id, 'user_id' => Yii::$app->user->getId()]);
         } else {
+            $model = News::findOne($id);
+        }
+
+        if (null === $model) {
             throw new NotFoundHttpException('The requested page does not exist.');
+        } else {
+            return $model;
         }
     }
 }

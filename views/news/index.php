@@ -13,17 +13,33 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <h1><?= Html::encode($this->title) ?></h1>
 
-    <p>
-        <?= Html::a(Yii::t('app', 'Create News'), ['create'], ['class' => 'btn btn-success']) ?>
-    </p>
     <?= GridView::widget([
                              'dataProvider' => $dataProvider,
                              'columns'      => [
                                  ['class' => 'yii\grid\SerialColumn'],
                                  'title',
-                                 'image',
+                                 [
+                                     'format'    => 'html',
+                                     'attribute' => 'image',
+                                     'value'     => function ($model) {
+                                         return Html::img($model->getThumbUploadUrl('image', 'news_thumb'));
+                                     }
+                                 ],
                                  'short_text',
-                                 ['class' => 'yii\grid\ActionColumn'],
+                                 'create_time',
+                                 [
+                                     'format' => 'html',
+                                     'value'  => function ($model) {
+                                         if (Yii::$app->user->isGuest) {
+                                             return Html::a(Yii::t('app', 'Preview'),
+                                                            ['news/preview', 'slug' => $model->slug]);
+                                         } else {
+                                             return Html::a(Yii::t('app', 'View'),
+                                                            ['news/view', 'slug' => $model->slug]);
+                                         }
+
+                                     }
+                                 ],
                              ],
                          ]); ?>
 </div>

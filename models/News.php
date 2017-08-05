@@ -2,6 +2,8 @@
 
 namespace app\models;
 
+use mongosoft\file\UploadBehavior;
+use mongosoft\file\UploadImageBehavior;
 use Yii;
 use dektrium\user\models\User;
 use yii\behaviors\SluggableBehavior;
@@ -47,7 +49,8 @@ class News extends \yii\db\ActiveRecord
             [['status', 'user_id'], 'integer'],
             [['text'], 'string'],
             [['create_time', 'update_time'], 'safe'],
-            [['title', 'slug', 'image', 'short_text'], 'string', 'max' => 255],
+            [['title', 'slug', 'short_text'], 'string', 'max' => 255],
+            ['image', 'image', 'extensions' => 'jpg, jpeg, gif, png', 'on' => ['insert', 'update']],
         ];
     }
 
@@ -116,20 +119,35 @@ class News extends \yii\db\ActiveRecord
                 'slugAttribute' => 'slug',
                 'ensureUnique'  => true
             ],
+            [
+                'class'       => UploadImageBehavior::className(),
+                'attribute'   => 'image',
+                'scenarios'   => ['insert', 'update'],
+                'placeholder' => '@app/assets/images/default-news.png',
+                'path'        => '@webroot/upload/news/{id}',
+                'url'         => '@web/upload/news/{id}',
+                'thumbs'      => [
+                    'thumb'      => ['width' => 400, 'quality' => 90],
+                    'news_thumb' => ['height' => 200, 'bg_color' => '000'],
+                ],
+            ],
         ];
     }
 
     /**
      * @inheritdoc
      */
-    public function beforeSave($insert)
+    public function beforeValidate()
     {
-       $this->user_id = Yii::$app->user->getId();
+        $this->user_id = Yii::$app->user->getId();
 
-       if(empty($this->short_text)) {
-           $this->short_text = StringHelper::truncate($this->text, 250);
-       }
+        if (empty($this->short_text)) {
+            $this->short_text = StringHelper::truncate($this->text, 250);
+        }
+        if (empty($this->status)) {
+            $this->status = News::STATUS_ACTIVE;
+        }
 
-       return parent::beforeSave($insert);
+        return parent::beforeValidate();
     }
 }

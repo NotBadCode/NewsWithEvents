@@ -18,7 +18,7 @@ class LastNewsWidget extends Widget
     /**
      * @var integer
      */
-    public $limit;
+    public $limit = 10;
 
     /**
      * @var string
@@ -33,7 +33,7 @@ class LastNewsWidget extends Widget
         $news = News::find()
                     ->where(['status' => News::STATUS_ACTIVE])
                     ->limit($this->limit)
-                    ->orderBy('create_time')
+                    ->orderBy('create_time DESC')
                     ->all();
 
         return $this->render($this->view, ['news' => $news]);

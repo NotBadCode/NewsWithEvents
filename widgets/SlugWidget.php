@@ -61,6 +61,11 @@ class SlugWidget extends Widget
     public $renderInput = true;
 
     /**
+     * @var bool
+     */
+    public $hidden = false;
+
+    /**
      * @inheritdoc
      */
     public function init()
@@ -95,11 +100,18 @@ class SlugWidget extends Widget
 
         $view->registerJs($js, $view::POS_READY);
 
+        if ($this->hidden) {
+            $inputType = 'hiddenInput';
+        } else {
+            $inputType = 'textInput';
+        }
         if ($this->renderInput) {
             if ($this->hasModel()) {
-                return Html::activeTextInput($this->model, $this->attribute, $this->options);
+                $inputType = "active" . ucfirst($inputType);
+
+                return Html::$inputType($this->model, $this->attribute, $this->options);
             } else {
-                return Html::textInput($this->name, $this->value, $this->options);
+                return Html::$inputType($this->name, $this->value, $this->options);
             }
         } else {
             return true;
