@@ -2,8 +2,6 @@
 
 namespace app\widgets;
 
-use Yii;
-use yii\base\InvalidConfigException;
 use yii\base\Model;
 use yii\base\Widget;
 use app\assets\SlugAsset;
@@ -11,7 +9,7 @@ use yii\helpers\Url;
 use yii\helpers\Html;
 
 /**
- * Class TextEditorWidget
+ * Class SlugWidget
  */
 class SlugWidget extends Widget
 {

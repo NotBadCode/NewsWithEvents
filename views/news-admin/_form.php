@@ -3,6 +3,8 @@
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use app\widgets\SlugWidget;
+use app\models\News;
+use app\widgets\ImageInput;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\News */
@@ -18,21 +20,17 @@ use app\widgets\SlugWidget;
     <?= $form->field($model, 'slug')->widget(SlugWidget::className(),
                                              [
                                                  'sourceFieldSelector' => Html::getInputId($model, 'title'),
-                                                 'url'                 => ['news/get-model-slug'],
+                                                 'url'                 => ['news-admin/get-model-slug'],
                                                  'options'             => ['class' => 'form-control']
                                              ]); ?>
 
-    <?= $form->field($model, 'image')->textInput(['maxlength' => true]) ?>
+    <?= $form->field($model, 'image')->widget(ImageInput::className()) ?>
 
-    <?= $form->field($model, 'status')->textInput() ?>
+    <?= $form->field($model, 'status')->dropDownList(News::getStatusArray()) ?>
 
-    <?= $form->field($model, 'short_text')->textInput(['maxlength' => true]) ?>
+    <?= $form->field($model, 'short_text')->textarea(['rows' => 6]) ?>
 
     <?= $form->field($model, 'text')->textarea(['rows' => 6]) ?>
-
-    <?= $form->field($model, 'create_time')->textInput() ?>
-
-    <?= $form->field($model, 'update_time')->textInput() ?>
 
     <div class="form-group">
         <?= Html::submitButton($model->isNewRecord ? Yii::t('app', 'Create') : Yii::t('app', 'Update'),

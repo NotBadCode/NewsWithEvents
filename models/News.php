@@ -5,6 +5,7 @@ namespace app\models;
 use Yii;
 use dektrium\user\models\User;
 use yii\behaviors\SluggableBehavior;
+use yii\helpers\StringHelper;
 
 /**
  * This is the model class for table "news".
@@ -116,5 +117,19 @@ class News extends \yii\db\ActiveRecord
                 'ensureUnique'  => true
             ],
         ];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function beforeSave($insert)
+    {
+       $this->user_id = Yii::$app->user->getId();
+
+       if(empty($this->short_text)) {
+           $this->short_text = StringHelper::truncate($this->text, 250);
+       }
+
+       return parent::beforeSave($insert);
     }
 }

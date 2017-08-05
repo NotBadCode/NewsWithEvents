@@ -4,6 +4,7 @@ namespace app\controllers;
 
 use app\actions\GetModelSlugAction;
 use app\models\User;
+use kartik\grid\EditableColumnAction;
 use Yii;
 use app\models\News;
 use yii\data\ActiveDataProvider;
@@ -11,6 +12,7 @@ use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\web\Response;
 
 /**
  * NewsController implements the CRUD actions for News model.
@@ -29,7 +31,7 @@ class NewsAdminController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['index', 'create', 'update', 'delete'],
+                        'actions' => ['index', 'create', 'update', 'delete', 'ajax-update'],
                         'allow'   => true,
                         'roles'   => [$roles['manager']],
                     ],
@@ -45,14 +47,24 @@ class NewsAdminController extends Controller
     }
 
     public function actions()
-  {
-      return [
-          'get-model-slug' => [
-              'class' => GetModelSlugAction::className(),
-              'modelName' => 'News'
-          ],
-      ];
-  }
+    {
+        return [
+            'get-model-slug' => [
+                'class'     => GetModelSlugAction::className(),
+                'modelName' => News::className()
+            ],
+            'ajax-update'    => [
+                'class'           => EditableColumnAction::className(),
+                'modelClass'      => News::className(),
+                'showModelErrors' => true,
+                'postOnly'        => true,
+                'ajaxOnly'        => true,
+                'outputValue'     => function ($model, $attribute, $key, $index) {
+                    return $model->statusName;
+                },
+            ]
+        ];
+    }
 
     /**
      * Lists all News models.
@@ -80,7 +92,7 @@ class NewsAdminController extends Controller
         $model = new News();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+            return $this->redirect(['update', 'id' => $model->id]);
         } else {
             return $this->render('create',
                                  [
@@ -99,8 +111,24 @@ class NewsAdminController extends Controller
     {
         $model = $this->findModel($id);
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+        $request = Yii::$app->request;
+
+
+        if ($model->load($request->post()) && $model->save()) {
+            if ($request->isAjax) {
+                Yii::$app->response->format = Response::FORMAT_JSON;
+
+                return ['result' => true];
+            } else {
+
+                return $this->redirect(['update', 'id' => $model->id]);
+            }
+        }
+
+        if ($request->isAjax) {
+            Yii::$app->response->format = Response::FORMAT_JSON;
+
+            return [];
         } else {
             return $this->render('update',
                                  [

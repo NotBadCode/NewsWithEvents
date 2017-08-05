@@ -1,12 +1,12 @@
 <?php
 
 use yii\helpers\Html;
-use yii\grid\GridView;
+use kartik\grid\GridView;
 
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = Yii::t('app', 'News');
+$this->title                   = Yii::t('app', 'News');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="news-index">
@@ -17,21 +17,13 @@ $this->params['breadcrumbs'][] = $this->title;
         <?= Html::a(Yii::t('app', 'Create News'), ['create'], ['class' => 'btn btn-success']) ?>
     </p>
     <?= GridView::widget([
-        'dataProvider' => $dataProvider,
-        'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
-
-            'id',
-            'title',
-            'slug',
-            'image',
-            'status',
-            // 'short_text',
-            // 'text:ntext',
-            // 'create_time',
-            // 'update_time',
-
-            ['class' => 'yii\grid\ActionColumn'],
-        ],
-    ]); ?>
+                             'dataProvider' => $dataProvider,
+                             'columns'      => [
+                                 ['class' => 'yii\grid\SerialColumn'],
+                                 'title',
+                                 'image',
+                                 'short_text',
+                                 ['class' => 'yii\grid\ActionColumn'],
+                             ],
+                         ]); ?>
 </div>

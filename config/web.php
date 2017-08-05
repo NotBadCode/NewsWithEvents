@@ -8,35 +8,36 @@ $config = [
     'basePath'   => dirname(__DIR__),
     'bootstrap'  => ['log'],
     'modules'    => [
-        'user' => [
+        'user'     => [
             'class'           => 'dektrium\user\Module',
             'adminPermission' => $params['roles']['admin'],
         ],
-        'rbac' => 'dektrium\rbac\RbacWebModule',
+        'rbac'     => 'dektrium\rbac\RbacWebModule',
+        'gridview' => ['class' => 'kartik\grid\Module'],
     ],
     'components' => [
-        'request'      => [
+        'request'       => [
             // !!! insert a secret key in the following (if it is empty) - this is required by cookie validation
             'cookieValidationKey' => '2eI87gOhiVDABvZppD0px-4L9pRIP_ad',
         ],
-        'cache'        => [
+        'cache'         => [
             'class' => 'yii\caching\FileCache',
         ],
-        'user'         => [
+        'user'          => [
             'identityClass'   => 'app\models\User',
             'enableAutoLogin' => true,
         ],
-        'errorHandler' => [
+        'errorHandler'  => [
             'errorAction' => 'site/error',
         ],
-        'mailer'       => [
+        'mailer'        => [
             'class'            => 'yii\swiftmailer\Mailer',
             // send all mails to a file by default. You have to set
             // 'useFileTransport' to false and configure a transport
             // for the mailer to send real emails.
             'useFileTransport' => true,
         ],
-        'log'          => [
+        'log'           => [
             'traceLevel' => YII_DEBUG ? 3 : 0,
             'targets'    => [
                 [
@@ -45,8 +46,8 @@ $config = [
                 ],
             ],
         ],
-        'db'           => $db,
-        'urlManager'   => [
+        'db'            => $db,
+        'urlManager'    => [
             'class'           => 'yii\web\UrlManager',
             'enablePrettyUrl' => true,
             'showScriptName'  => false,
@@ -64,7 +65,7 @@ if (YII_ENV_DEV) {
     // configuration adjustments for 'dev' environment
     $config['bootstrap'][]      = 'debug';
     $config['modules']['debug'] = [
-        'class' => 'yii\debug\Module',
+        'class'      => 'yii\debug\Module',
         // uncomment the following to add your IP if you are not connecting from localhost.
         'allowedIPs' => ['127.0.0.1', '::1'],
     ];

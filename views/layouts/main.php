@@ -11,6 +11,28 @@ use yii\widgets\Breadcrumbs;
 use app\assets\AppAsset;
 
 AppAsset::register($this);
+
+$menuItems = [
+    ['label' => 'News', 'url' => ['/news/index']],
+];
+if (Yii::$app->user->isGuest) {
+    $menuItems[] = ['label' => 'Login', 'url' => ['/user/security/login']];
+} else {
+    if (Yii::$app->user->identity->getIsAdmin()) {
+        $menuItems[] = ['label' => 'Users', 'url' => ['/user/admin/index']];
+        $menuItems[] = ['label' => 'Roles', 'url' => ['/rbac/role/index']];
+    }
+    $menuItems[] = (
+        '<li>'
+        . Html::beginForm(['/user/security/logout'], 'post')
+        . Html::submitButton(
+            'Logout (' . Yii::$app->user->identity->username . ')',
+            ['class' => 'btn btn-link logout']
+        )
+        . Html::endForm()
+        . '</li>'
+    );
+}
 ?>
 <?php $this->beginPage() ?>
 <!DOCTYPE html>
@@ -37,21 +59,7 @@ AppAsset::register($this);
                   ]);
     echo Nav::widget([
                          'options' => ['class' => 'navbar-nav navbar-right'],
-                         'items'   => [
-                             ['label' => 'News', 'url' => ['/news/index']],
-                             Yii::$app->user->isGuest ? (
-                             ['label' => 'Login', 'url' => ['/user/security/login']]
-                             ) : (
-                                 '<li>'
-                                 . Html::beginForm(['/user/security/logout'], 'post')
-                                 . Html::submitButton(
-                                     'Logout (' . Yii::$app->user->identity->username . ')',
-                                     ['class' => 'btn btn-link logout']
-                                 )
-                                 . Html::endForm()
-                                 . '</li>'
-                             )
-                         ],
+                         'items'   => $menuItems,
                      ]);
     NavBar::end();
     ?>
