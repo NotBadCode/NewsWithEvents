@@ -15,7 +15,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <h1><?= Html::encode($this->title) ?></h1>
     <?= Html::img($model->getThumbUploadUrl('image'), ['class' => 'news-image']); ?>
     <p>
-        <?= $model->short_text ?>
+        <?= Html::encode($model->short_text) ?>
     </p>
 
 </div>

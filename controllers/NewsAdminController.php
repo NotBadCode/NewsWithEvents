@@ -92,15 +92,22 @@ class NewsAdminController extends Controller
         $model = new News();
         $model->setScenario('insert');
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['index']);
-        } else {
-            return $this->render('create',
-                                 [
-                                     'model'      => $model,
-                                     'formParams' => [],
-                                 ]);
+        if ($model->load(Yii::$app->request->post())) {
+            if ($model->save()) {
+                Yii::$app->session->setFlash('success', Yii::t('app', 'News successfully added'));
+
+
+                return $this->redirect(['index']);
+            } else {
+                Yii::$app->session->setFlash('error', Yii::t('app', 'Error while adding news!'));
+            }
         }
+
+        return $this->render('create',
+                             [
+                                 'model'      => $model,
+                                 'formParams' => [],
+                             ]);
     }
 
     /**
@@ -116,28 +123,22 @@ class NewsAdminController extends Controller
 
         $request = Yii::$app->request;
 
-        if ($model->load($request->post()) && $model->save()) {
-            if ($request->isAjax) {
-                Yii::$app->response->format = Response::FORMAT_JSON;
+        if ($model->load($request->post())) {
+            if ($model->save()) {
+                Yii::$app->session->setFlash('success', Yii::t('app', 'News successfully updated'));
 
-                return ['result' => true];
-            } else {
 
                 return $this->redirect(['index']);
+            } else {
+                Yii::$app->session->setFlash('error', Yii::t('app', 'Error while updating news!'));
             }
         }
 
-        if ($request->isAjax) {
-            Yii::$app->response->format = Response::FORMAT_JSON;
-
-            return [];
-        } else {
-            return $this->render('update',
-                                 [
-                                     'model'      => $model,
-                                     'formParams' => [],
-                                 ]);
-        }
+        return $this->render('update',
+                             [
+                                 'model'      => $model,
+                                 'formParams' => [],
+                             ]);
     }
 
     /**

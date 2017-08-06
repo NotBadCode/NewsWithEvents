@@ -35,7 +35,6 @@ $this->params['breadcrumbs'][] = $this->title;
     <?= GridView::widget([
                              'dataProvider' => $dataProvider,
                              'columns'      => [
-                                 ['class' => 'yii\grid\SerialColumn'],
                                  'id',
                                  'title',
                                  [
@@ -47,6 +46,9 @@ $this->params['breadcrumbs'][] = $this->title;
                                  [
                                      'class'           => 'kartik\grid\EditableColumn',
                                      'attribute'       => 'status',
+                                     'readonly'        => function ($model) {
+                                         return !$model->checkUser();
+                                     },
                                      'value'           => function ($model) {
                                          return $model->statusName;
                                      },
@@ -72,10 +74,10 @@ $this->params['breadcrumbs'][] = $this->title;
                                      'template'       => '{update} {delete}',
                                      'visibleButtons' => [
                                          'update' => function ($model) {
-                                             return $model->user_id === Yii::$app->user->getId();
+                                             return $model->checkUser();
                                          },
                                          'delete' => function ($model) {
-                                             return $model->user_id === Yii::$app->user->getId();
+                                             return $model->checkUser();
                                          }
                                      ]
                                  ],

@@ -41,9 +41,6 @@ $config = [
             // for the mailer to send real emails.
             'useFileTransport' => true,
         ],
-        'mailSender'   => [
-            'class' => 'app\components\MailSender',
-        ],
         'log'          => [
             'traceLevel' => YII_DEBUG ? 3 : 0,
             'targets'    => [
@@ -69,7 +66,7 @@ $config = [
         'view'         => [
             'theme' => [
                 'pathMap' => [
-                    '@dektrium/user/views/settings' => '@app/views/dektrium/settings'
+                    '@dektrium/user/views/settings/profile' => '@app/views/dektrium/settings/profile'
                 ],
             ],
         ],

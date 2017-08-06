@@ -4,6 +4,7 @@
 
 /* @var $content string */
 
+use kartik\growl\Growl;
 use yii\helpers\Html;
 use yii\bootstrap\Nav;
 use yii\bootstrap\NavBar;
@@ -12,22 +13,44 @@ use app\assets\AppAsset;
 
 AppAsset::register($this);
 
-$menuItems[] = ['label' => 'News', 'url' => ['/news/index']];
+$menuItems[] = ['label' => Yii::t('app', 'News'), 'url' => ['/news/index']];
 if (Yii::$app->user->isGuest) {
-    $menuItems[] = ['label' => 'Login', 'url' => ['/user/security/login']];
+    $menuItems[] = [
+        'label' => Yii::t('app', 'Login'),
+        'url'   => ['/user/security/login']
+    ];
 } else {
-    if (Yii::$app->user->identity->getIsAdmin()) {
-        $menuItems[] = ['label' => 'Admin', 'items' => [
-            ['label' => 'News', 'url' => ['/news-admin/index']],
-            ['label' => 'Users', 'url' => ['/user/admin/index']],
-            ['label' => 'Roles', 'url' => ['/rbac/role/index']]
-        ]];
+    if (Yii::$app->user->can(Yii::$app->params['roles']['manager'])) {
+        $menuItems['admin'] = [
+            'label' => Yii::t('app', 'Admin'),
+            'items' => [
+                ['label' => Yii::t('app', 'News'), 'url' => ['/news-admin/index']],
+            ]
+        ];
     }
+    if (Yii::$app->user->identity->getIsAdmin()) {
+        $menuItems['admin'] = [
+            'label' => Yii::t('app', 'Admin'),
+            'items' => [
+                ['label' => Yii::t('app', 'News'), 'url' => ['/news-admin/index']],
+                ['label' => Yii::t('app', 'Users'), 'url' => ['/user/admin/index']],
+                ['label' => Yii::t('app', 'Roles'), 'url' => ['/rbac/role/index']]
+            ]
+        ];
+    }
+    $menuItems[] = [
+        'label' => Yii::t('app', 'Events'),
+        'url'   => ['/news-event/index']
+    ];
+    $menuItems[] = [
+        'label' => Yii::$app->user->identity->username,
+        'url'   => ['/user/settings/profile']
+    ];
     $menuItems[] = (
         '<li>'
         . Html::beginForm(['/user/security/logout'], 'post')
         . Html::submitButton(
-            'Logout (' . Yii::$app->user->identity->username . ')',
+            Yii::t('app', 'Logout'),
             ['class' => 'btn btn-link logout']
         )
         . Html::endForm()
@@ -80,6 +103,16 @@ if (Yii::$app->user->isGuest) {
         <p class="pull-right"><?= Yii::powered() ?></p>
     </div>
 </footer>
+
+<?php foreach (Yii::$app->session->getAllFlashes() as $key => $message): ?>
+    <?= Growl::widget([
+                          'type'          => Growl::TYPE_SUCCESS,
+                          'icon'          => 'glyphicon glyphicon-ok-sign',
+                          'title'         => 'Note',
+                          'showSeparator' => true,
+                          'body'          => $message
+                      ]); ?>
+<?php endforeach; ?>
 
 <?php $this->endBody() ?>
 </body>

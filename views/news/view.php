@@ -6,7 +6,7 @@ use yii\widgets\DetailView;
 /* @var $this yii\web\View */
 /* @var $model app\models\News */
 
-$this->title = $model->title;
+$this->title                   = $model->title;
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'News'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
@@ -15,7 +15,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <h1><?= Html::encode($this->title) ?></h1>
     <?= Html::img($model->getThumbUploadUrl('image'), ['class' => 'news-image']); ?>
     <p>
-        <?= $model->text ?>
+        <?= Html::encode($model->text) ?>
     </p>
 
 </div>

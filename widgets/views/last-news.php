@@ -14,11 +14,11 @@ use yii\helpers\Html;
     <?php foreach ($news as $newsItem): ?>
         <div class="news-item">
             <h3>
-                <?= $newsItem->title ?>
+                <?= Html::encode($newsItem->title) ?>
             </h3>
             <div>
                 <?= Html::img($newsItem->getThumbUploadUrl('image', 'news_thumb'), ['class' => 'news-image']); ?>
-                <?= $newsItem->short_text ?>
+                <?= Html::encode($newsItem->short_text) ?>
                 <br>
                 <?= Html::a(Yii::t('app', 'Read more'),
                             ['news/view', 'slug' => $newsItem->slug]) ?>

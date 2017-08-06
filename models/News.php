@@ -2,11 +2,12 @@
 
 namespace app\models;
 
-use mongosoft\file\UploadBehavior;
+use app\events\NewsEvent;
 use mongosoft\file\UploadImageBehavior;
 use Yii;
 use dektrium\user\models\User;
 use yii\behaviors\SluggableBehavior;
+use yii\db\ActiveRecord;
 use yii\helpers\StringHelper;
 
 /**
@@ -28,6 +29,8 @@ use yii\helpers\StringHelper;
  */
 class News extends \yii\db\ActiveRecord
 {
+    const EVENT_NEWS_CREATED = 'news_created';
+
     const STATUS_DISABLE = 0;
     const STATUS_ACTIVE  = 1;
 
@@ -139,15 +142,43 @@ class News extends \yii\db\ActiveRecord
      */
     public function beforeValidate()
     {
-        $this->user_id = Yii::$app->user->getId();
+        if (!$this->checkUser()) {
+            return false;
+        }
+
+        if ($this->isNewRecord) {
+            $this->user_id = Yii::$app->user->getId();
+        }
 
         if (empty($this->short_text)) {
             $this->short_text = StringHelper::truncate($this->text, 250);
         }
-        if (empty($this->status)) {
+        if (null === $this->status) {
             $this->status = News::STATUS_ACTIVE;
         }
 
         return parent::beforeValidate();
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function afterSave($insert, $changedAttributes)
+    {
+        parent::afterSave($insert, $changedAttributes);
+
+        if ($insert) {
+            $event = new NewsEvent();
+            $event->setNews($this);
+            $this->trigger(self::EVENT_NEWS_CREATED, $event);
+        }
+    }
+
+    /**
+     * @return boolean
+     */
+    public function checkUser()
+    {
+        return Yii::$app->user->identity->getIsAdmin() || $this->user_id === Yii::$app->user->getId();
     }
 }
