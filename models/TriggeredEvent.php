@@ -82,4 +82,34 @@ class TriggeredEvent extends \yii\db\ActiveRecord
 
         return $this->senderModel;
     }
+
+    /**
+     * @param  integer $userId
+     * @return \yii\db\ActiveQuery
+     */
+    public static function getNewEventsForUserQuery($userId)
+    {
+        return self::find()
+                   ->innerJoin(News::tableName(), 'news.id = sender_id')
+                   ->joinWith('triggeredEventUsers teu', true)
+                   ->where([
+                               'event'       => News::EVENT_NEWS_CREATED,
+                               'news.status' => News::STATUS_ACTIVE,
+                           ])
+                   ->andWhere([
+                                  'OR',
+                                  ['!=', 'teu.user_id', $userId],
+                                  ['teu.user_id' => null]
+                              ]);
+    }
+
+    /**
+     * @param  integer $userId
+     * @param  integer $limit
+     * @return TriggeredEvent[]
+     */
+    public static function getLastEventsForUser($userId, $limit = 5)
+    {
+        return self::getNewEventsForUserQuery($userId)->limit($limit)->all();
+    }
 }

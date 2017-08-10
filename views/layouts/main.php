@@ -106,10 +106,8 @@ if (Yii::$app->user->isGuest) {
 
 <?php foreach (Yii::$app->session->getAllFlashes() as $key => $message): ?>
     <?= Growl::widget([
-                          'type'          => Growl::TYPE_SUCCESS,
+                          'type'          => $key,
                           'icon'          => 'glyphicon glyphicon-ok-sign',
-                          'title'         => 'Note',
-                          'showSeparator' => true,
                           'body'          => $message
                       ]); ?>
 <?php endforeach; ?>

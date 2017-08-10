@@ -48,18 +48,7 @@ class NewsEventController extends Controller
      */
     public function actionIndex()
     {
-        $query = TriggeredEvent::find()
-                               ->innerJoin(News::tableName(), 'news.id = sender_id')
-                               ->joinWith('triggeredEventUsers teu', true)
-                               ->where([
-                                           'event'       => News::EVENT_NEWS_CREATED,
-                                           'news.status' => News::STATUS_ACTIVE,
-                                       ])
-                               ->andWhere([
-                                              'OR',
-                                              ['!=', 'teu.user_id', Yii::$app->user->getId()],
-                                              ['teu.user_id' => null]
-                                          ]);
+        $query = TriggeredEvent::getNewEventsForUserQuery(Yii::$app->user->getId());
 
         $dataProvider = new ActiveDataProvider([
                                                    'query' => $query,
@@ -90,5 +79,14 @@ class NewsEventController extends Controller
         $eventUser->save();
 
         return $this->redirect(['index']);
+    }
+    /**
+     * @param  integer $id
+     * @return \yii\web\Response
+     * @throws NotFoundHttpException
+     */
+    public function actionGetNewEvents()
+    {
+        echo '<pre>';var_dump(TriggeredEvent::getLastEventsForUser(Yii::$app->user->getId()));echo '</pre>';exit;
     }
 }

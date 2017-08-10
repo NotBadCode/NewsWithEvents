@@ -5,6 +5,7 @@ namespace app\controllers;
 use app\actions\GetModelSlugAction;
 use app\models\User;
 use kartik\grid\EditableColumnAction;
+use kartik\growl\Growl;
 use Yii;
 use app\models\News;
 use yii\data\ActiveDataProvider;
@@ -94,12 +95,12 @@ class NewsAdminController extends Controller
 
         if ($model->load(Yii::$app->request->post())) {
             if ($model->save()) {
-                Yii::$app->session->setFlash('success', Yii::t('app', 'News successfully added'));
+                Yii::$app->session->setFlash(Growl::TYPE_SUCCESS, Yii::t('app', 'News successfully added'));
 
 
                 return $this->redirect(['index']);
             } else {
-                Yii::$app->session->setFlash('error', Yii::t('app', 'Error while adding news!'));
+                Yii::$app->session->setFlash(Growl::TYPE_DANGER, Yii::t('app', 'Error while adding news!'));
             }
         }
 
@@ -125,12 +126,12 @@ class NewsAdminController extends Controller
 
         if ($model->load($request->post())) {
             if ($model->save()) {
-                Yii::$app->session->setFlash('success', Yii::t('app', 'News successfully updated'));
+                Yii::$app->session->setFlash(Growl::TYPE_SUCCESS, Yii::t('app', 'News successfully updated'));
 
 
                 return $this->redirect(['index']);
             } else {
-                Yii::$app->session->setFlash('error', Yii::t('app', 'Error while updating news!'));
+                Yii::$app->session->setFlash(Growl::TYPE_DANGER, Yii::t('app', 'Error while updating news!'));
             }
         }
 

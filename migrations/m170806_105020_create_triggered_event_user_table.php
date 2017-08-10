@@ -1,7 +1,7 @@
 <?php
 
 use yii\db\Migration;
-use app\models\TriggeredEvent;
+use app\models\TriggeredEventUser;
 
 /**
  * Handles the creation of table `triggered_event_user`.
@@ -20,7 +20,7 @@ class m170806_105020_create_triggered_event_user_table extends Migration
                                'user_id'            => $this->integer()->notNull(),
                                'status'             => $this->integer()
                                                             ->notNull()
-                                                            ->defaultValue(TriggeredEvent::STATUS_VIEWED),
+                                                            ->defaultValue(TriggeredEventUser::STATUS_VIEWED),
                            ]);
 
         $this->addForeignKey('fk_triggered_event_user_event',
